@@ -30,7 +30,6 @@ PRODUCT_PACKAGES += \
     GoogleSearch \
     hcitool \
     QuickSearchBox \
-    FileManager \
     com.android.future.usb.accessory
 
 PRODUCT_COPY_FILES += \
