@@ -24,10 +24,25 @@ on boot
     write /sys/class/rfkill/rfkill0/state 0
 ### End of LGE bluetooth
 # WIFI
-    mkdir /data/misc/wifi/sockets 0770 wifi wifi
-    setprop wifi.supplicant_scan_interval 20
-    setprop wifi.interface wlan0
+#    mkdir /data/misc/wifi/sockets 0770 wifi wifi
+#    setprop wifi.supplicant_scan_interval 20
+#    setprop wifi.interface wlan0
+#    mkdir /data/misc/dhcp 0777 system system
+
+    mkdir /data/misc/wifi 0777 wifi wifi
+    chmod 0777 /data/misc/wifi/
+    exec /system/bin/rm -r /data/misc/wifi/sockets
+    mkdir /data/misc/wifi/sockets 0777 wifi wifi
+    mkdir /data/disk 0777 system system
+
+#DHCP
     mkdir /data/misc/dhcp 0777 system system
+    chmod 0666 /data/bdaddr
+
+on property:init.svc.wpa_supplicant=stopped
+    stop dhcpcd
+    exec /system/bin/rm -r /data/misc/wifi/sockets
+    mkdir /data/misc/wifi/sockets 0777 wifi wifi
 
 service qmuxd /system/bin/qmuxd
     user radio
@@ -41,7 +56,12 @@ service hciattach /system/bin/sh /system/bin/init.qcom.bt.sh
     group bluetooth net_bt_admin
     disabled
 
-service dhcpcd_wlan0 /system/bin/dhcpcd -BKA wlan0
+service bdaddr /system/bin/bdaddr_read
+    user root
+    disabled
+    oneshot
+
+service dhcpcd_wlan0 /system/bin/dhcpcd -BKLA wlan0
     disabled
     oneshot
 
