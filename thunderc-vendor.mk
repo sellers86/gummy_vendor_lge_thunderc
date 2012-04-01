@@ -4,18 +4,46 @@ WITH_WINDOWS_MEDIA := true
 PRODUCT_PROPERTY_OVERRIDES += \
     dalvik.vm.dexopt-data-only=1 \
 
+# Audio
 PRODUCT_PACKAGES += \
-    libmm-omxcore \
+    audio_policy.thunderc \
+    audio.primary.thunderc \
+    libaudio.thunderc
+
+# Display
+PRODUCT_PACKAGES += \
+    libgenlock \
+    libmemalloc \
+    liboverlay \
+    libQcomUI \
+    libtilerenderer \
+    libopencorehw
+
+# QCOM OMX
+PRODUCT_PACKAGES += \
+    libstagefrighthw \
     libOmxCore \
+    libmm-omxcore \
+    libdivxdrmdecrypt \
+    libOmxVdec \
+    libOmxVenc
+
+# Misc
+PRODUCT_PACKAGES += \
+    com.android.future.usb.accessory \
+    gps.thunderc \
+    lights.thunderc \
+    hwaddrs \
+    lgapversion \
+    bdaddr_read
+ 
+PRODUCT_PACKAGES += \
     libjni_latinime \
     librs_jni \
     brcm_patchram_plus \
-    libaudio.thunderc \
     copybit.thunderc \
     gralloc.thunderc \
     sensors.thunderc \
-    lights.thunderc \
-    gps.thunderc \
     bash \
     nano \
     e2fsck \
@@ -23,17 +51,16 @@ PRODUCT_PACKAGES += \
     erase_image \
     dump_image \
     thunder_keypad.kcm.bin \
-    bdaddr_read
 
 PRODUCT_PACKAGES += \
     Provision \
     GoogleSearch \
+    LatinIME \
     hcitool \
     QuickSearchBox \
-    com.android.future.usb.accessory
+    FileManager
 
 PRODUCT_COPY_FILES += \
-    vendor/lge/thunderc/proprietary/etc/apns-conf.xml:system/etc/apns-conf.xml \
     vendor/lge/thunderc/proprietary/etc/gps.conf:system/etc/gps.conf \
     vendor/lge/thunderc/proprietary/etc/permissions/android.hardware.microphone.xml:system/etc/permissions/android.hardware.microphone.xml \
     vendor/lge/thunderc/proprietary/etc/01_qcomm_omx.cfg:system/etc/01_qcomm_omx.cfg \
