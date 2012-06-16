@@ -21,11 +21,11 @@
 /dev/rfkill               0660   wifi       wifi 
 
 # gpu driver for adreno200 is globally accessible
-/dev/kgsl*                 0777   root       root
+/dev/kgsl*                0777   root       root
 /dev/kgsl-3d0             0666   root       root
 /dev/kgsl-2d0             0666   root       root
 /dev/kgsl-2d1             0666   root       root
-/dev/genlock            0666    system  graphics
+/dev/genlock		  0666   system	    graphics
 
 # these should not be world writable
 /dev/diag_arm9            0660   radio      radio
@@ -127,7 +127,7 @@
 #permissions for audio
 /dev/msm_amrnb            0660  system       audio
 /dev/msm_amrwb            0660  system       audio
-/dev/msm_aac*              0660  system       audio
+/dev/msm_aac*             0660  system       audio
 /dev/msm_qcelp            0660  system       audio
 /dev/msm_evrc             0660  system       audio
 /dev/msm_fm               0660  system       audio
@@ -161,8 +161,8 @@
 /dev/sdioctl7             0640  radio        radio
 
 # video encoder on 720p-enabled 8k targets
-/dev/pmem_venc            0660   system     audio
-/dev/msm_vidc*            0660   system     graphics
+/dev/pmem_venc            0660  system	     audio
+/dev/msm_vidc*            0660  system	     graphics
 /dev/oncrpc/*             0660  system	     qcom_oncrpc
 /dev/ami304hal		  0640  compass	     system
 /dev/ami304daemon	  0640  compass	     system
@@ -170,3 +170,7 @@
 /dev/K3DH		  0640  compass	     system
 /dev/KR3DH		  0640  compass	     system
 /dev/KR3DM		  0640  compass	     system
+
+# ADB
+/dev/android_adb	  0660	adb	     adb
+/dev/android_adb_enable	  0660	adb	     adb

@@ -46,6 +46,11 @@ on init
    chmod 0755 /data/system/entropy.dat
    chmod 0755 /data/system/wallpaper_info.xml
 
+    # performance tweaks for flash
+    write /sys/block/mtdblock3/bdi/read_ahead_kb 4
+    write /sys/block/mtdblock4/bdi/read_ahead_kb 4
+    write /sys/block/mtdblock5/bdi/read_ahead_kb 4
+
 on fs
 
 # framebuffer permission for copybit
