@@ -96,7 +96,6 @@
                    height="480"
                    frameRate="15" />
             <Audio codec="aac"
-
                    bitRate="96000"
                    sampleRate="16000"
                    channels="1" />
