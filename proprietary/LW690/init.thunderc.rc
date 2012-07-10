@@ -1,5 +1,13 @@
 import init.thunderc.usb.rc
 
+on boot-pause
+    exec charger
+on charger
+    class_start charger
+    exec charger
+
+on early-boot    exec /sbin/chargerlogo
+
 on early-init
     mkdir /system
     mkdir /data 0771 system system
@@ -9,126 +17,121 @@ on early-init
     mkdir /sd-ext 0771 system system
 
 on init
-
 # setup the global environment
-  export EXTERNAL_STORAGE /mnt/sdcard
-  export SD_EXT_DIRECTORY /sd-ext
-  export DOWNLOAD_CACHE /cache/download
+    export EXTERNAL_STORAGE /mnt/sdcard
+    export SD_EXT_DIRECTORY /sd-ext
+    export DOWNLOAD_CACHE /cache/download
 
 # Backwards Compat - XXX: Going away in G*
-  symlink /mnt/sdcard /sdcard
+    symlink /mnt/sdcard /sdcard
 
 # Add permissions for camera access
-  chmod 0666 /dev/msm_camera/config0
-  chmod 0666 /dev/msm_camera/control0
-  chmod 0666 /dev/msm_camera/frame0
-  chmod 0666 /dev/msm_camera/pic0
+    chmod 0666 /dev/msm_camera/config0
+    chmod 0666 /dev/msm_camera/control0
+    chmod 0666 /dev/msm_camera/frame0
+    chmod 0666 /dev/msm_camera/pic0
 	
 # Define the memory thresholds at which the above process classes will
 # be killed.  These numbers are in pages (4k).
-  setprop ro.FOREGROUND_APP_MEM 1536
-  setprop ro.VISIBLE_APP_MEM 2048
-  setprop ro.SECONDARY_SERVER_MEM 4096
-  setprop ro.BACKUP_APP_MEM 4096
-  setprop ro.HOME_APP_MEM 4096
-  setprop ro.HIDDEN_APP_MEM 5120
-  setprop ro.CONTENT_PROVIDER_MEM 5632
-  setprop ro.EMPTY_APP_MEM 6144
+    setprop ro.FOREGROUND_APP_MEM 1536 
+    setprop ro.VISIBLE_APP_MEM 2048 
+    setprop ro.SECONDARY_SERVER_MEM 4096 
+    setprop ro.BACKUP_APP_MEM 4096 
+    setprop ro.HOME_APP_MEM 4096 
+    setprop ro.HIDDEN_APP_MEM 5120 
+    setprop ro.CONTENT_PROVIDER_MEM 5632 
+    setprop ro.EMPTY_APP_MEM 6144 
 
 # Import Froyo LMK settings due to its less aggressive nature 
-  write /sys/module/lowmemorykiller/parameters/minfree 1536,2048,4096,5120,5632,6144
+    write /sys/module/lowmemorykiller/parameters/minfree 1536,2048,4096,5120,5632,6144 
 # Enable low memory killer to check file pages
-  write /sys/module/lowmemorykiller/parameters/minfile 0,0,0,5120,5632,6144 
-  write /sys/module/lowmemorykiller/parameters/check_filepages 1
+    write /sys/module/lowmemorykiller/parameters/minfile 0,0,0,5120,5632,6144 
+    write /sys/module/lowmemorykiller/parameters/check_filepages 1 
 
 # fix for enropy service and some other that failed
-   chmod 0755 /data/system/appwidgets.xml
-   chmod 0755 /data/system/entropy.dat
-   chmod 0755 /data/system/wallpaper_info.xml
+    chmod 0755 /data/system/appwidgets.xml
+    chmod 0755 /data/system/entropy.dat
+    chmod 0755 /data/system/wallpaper_info.xml
 
-    # performance tweaks for flash
+# performance tweaks for flash
     write /sys/block/mtdblock3/bdi/read_ahead_kb 4
     write /sys/block/mtdblock4/bdi/read_ahead_kb 4
     write /sys/block/mtdblock5/bdi/read_ahead_kb 4
 
 on fs
-
 # framebuffer permission for copybit
     chmod 0666 /dev/graphics/fb0
 
 on post-fs
-
 # nv
-  mkdir /data/nv
-  chown system system /data/nv
-  chmod 0711 /data/nv
+    mkdir /data/nv
+    chown system system /data/nv
+    chmod 0711 /data/nv
 
-  mkdir /data/local/download 0771 system cache
-  mkdir /cache/download 0771 system cache
+    mkdir /data/local/download 0771 system cache
+    mkdir /cache/download 0771 system cache
 
 # wifi
-  chmod 0777 /data/misc/wifi/config_mac
-  mkdir /data/audioprop 0777 system system
-  mkdir /data/misc/wifi/sockets 0770 wifi wifi
-  setprop wifi.supplicant_scan_interval 20
-  setprop wifi.interface wlan0
-  mkdir /data/misc/dhcp 0777 system system
-
+    chmod 0777 /data/misc/wifi/config_mac
+    mkdir /data/audioprop 0777 system system
+    mkdir /data/misc/wifi/sockets 0770 wifi wifi
+    setprop wifi.supplicant_scan_interval 20
+    setprop wifi.interface wlan0
+    mkdir /data/misc/dhcp 0777 system system
 
 on post-fs-data
 
 # wifi
-  mkdir /data/misc/wifi 0770 wifi wifi
-  mkdir /data/misc/wifi/sockets 0770 wifi wifi
-  mkdir /data/misc/dhcp 0770 dhcp dhcp
-  chown dhcp dhcp /data/misc/dhcp
-  mkdir /data/misc/hotspot 0770 system hotspot
+    mkdir /data/misc/wifi 0770 wifi wifi
+    mkdir /data/misc/wifi/sockets 0770 wifi wifi
+    mkdir /data/misc/dhcp 0770 dhcp dhcp
+    chown dhcp dhcp /data/misc/dhcp
+    mkdir /data/misc/hotspot 0770 system hotspot
 
-  setprop vold.post_fs_data_done 1
+    setprop vold.post_fs_data_done 1
 
 on early-boot
 # set RLIMIT_MEMLOCK to 64MB
-  setrlimit 8 67108864 67108864
+    setrlimit 8 67108864 67108864
   
 on boot
-
-  # Increase the read ahead cache from 128KB to 2048KB (SD)
-  write /sys/devices/virtual/bdi/179:0/read_ahead_kb 2048
-  #  Increase the read ahead cache from 4KB to 512KB (/data
-  write /sys/devices/virtual/mtd/mtd6/mtdblock6/queue/read_ahead_kb 512
-  #  Increase the read ahead cache from 4KB to 512KB (/system)
-  write /sys/devices/virtual/mtd/mtd6/mtdblock5/queue/read_ahead_kb 512
+# Increase the read ahead cache from 128KB to 2048KB (SD)	
+    write /sys/devices/virtual/bdi/179:0/read_ahead_kb 2048
+# Increase the read ahead cache from 4KB to 512KB (/data
+    write /sys/devices/virtual/mtd/mtd6/mtdblock6/queue/read_ahead_kb 512
+# Increase the read ahead cache from 4KB to 512KB (/system)
+    write /sys/devices/virtual/mtd/mtd6/mtdblock5/queue/read_ahead_kb 512
 
 # radio
 #  mkdir /data/radio 0770 radio radio
-  chmod 2770 /data/radio
+    chmod 2770 /data/radio
 
 # sensors
-  mkdir /data/amit 0777 ami304d ami304d
-  chmod 0666 /data/amit/AMI306_Config.ini
-  chmod 0666 /data/amit/AMI306_Config2.ini
+    mkdir /data/amit 0777 ami304d ami304d
+    chmod 0666 /data/amit/AMI306_Config.ini
+    chmod 0666 /data/amit/AMI306_Config2.ini
 
-  chown compass system /sys/bus/i2c/drivers/proximity_gp2ap/4-0044/enable
-  chmod 0660 /sys/bus/i2c/drivers/proximity_gp2ap/4-0044/enable
+    chown compass system /sys/bus/i2c/drivers/proximity_gp2ap/4-0044/enable
+    chmod 0660 /sys/bus/i2c/drivers/proximity_gp2ap/4-0044/enable
 
 # liblights
-  chown system system /sys/class/leds/green/brightness
-  chown system system /sys/class/leds/green/blink
-  chown system system /sys/class/leds/amber/brightness
-  chown system system /sys/class/leds/amber/blink
-  chown system system /sys/class/leds/button-backlight/brightness
-  chown system system /sys/class/leds/flashlight/brightness
-  chown system system /sys/class/leds/lcd-backlight/brightness
-  chown system system /sys/class/leds/keyboard-backlight/brightness
+    chown system system /sys/class/leds/green/brightness
+    chown system system /sys/class/leds/green/blink
+    chown system system /sys/class/leds/amber/brightness
+    chown system system /sys/class/leds/amber/blink
+    chown system system /sys/class/leds/button-backlight/brightness
+    chown system system /sys/class/leds/flashlight/brightness
+    chown system system /sys/class/leds/lcd-backlight/brightness
+    chown system system /sys/class/leds/keyboard-backlight/brightness
 
 # wifi
-  mkdir /data/misc 01771 system misc
-  mkdir /data/misc/wifi 0770 system wifi
-  mkdir /data/misc/wifi/sockets
-  chmod 770 /data/misc/wifi/sockets
-  mkdir /data/misc/dhcp 0770 dhcp dhcp
-  chown dhcp dhcp /data/misc/dhcp
-  mkdir /data/system 0775 system system
+    mkdir /data/misc 01771 system misc
+    mkdir /data/misc/wifi 0770 system wifi
+    mkdir /data/misc/wifi/sockets
+    chmod 770 /data/misc/wifi/sockets
+    mkdir /data/misc/dhcp 0770 dhcp dhcp
+    chown dhcp dhcp /data/misc/dhcp
+    mkdir /data/system 0775 system system
   
 # bluetooth
     chmod 0660 /dev/ttyHS0
@@ -142,9 +145,9 @@ on boot
     write /sys/class/rfkill/rfkill0/state 0
 
 # allow interfaces to get IPv6 address when tethering is enabled
-  write /proc/sys/net/ipv6/conf/rmnet0/accept_ra 2
-  write /proc/sys/net/ipv6/conf/rmnet1/accept_ra 2
-  write /proc/sys/net/ipv6/conf/rmnet2/accept_ra 2
+    write /proc/sys/net/ipv6/conf/rmnet0/accept_ra 2
+    write /proc/sys/net/ipv6/conf/rmnet1/accept_ra 2
+    write /proc/sys/net/ipv6/conf/rmnet2/accept_ra 2
 
 # Fast dormancy settings
     setprop ro.ril.fast.dormancy.rule 1
@@ -292,7 +295,7 @@ service drm /system/bin/drmserver
 
 ## Stop dhcpcd when wifi was stopped
 on property:init.svc.wpa_supplicant=stopped
-   stop dhcpcd_wlan0
+    stop dhcpcd_wlan0
 
 ## start qcom-post-boot
 on property:init.svc.bootanim=stopped
@@ -310,5 +313,5 @@ on property:dev.bootcomplete=1
 
 ## Set proper baseband version after getting the dummy from RIL
 on property:gsm.version.baseband=V07u-000-000-MAR-23-2009
-   start setapversion
+    start setapversion
 
