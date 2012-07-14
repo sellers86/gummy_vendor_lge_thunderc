@@ -5,18 +5,19 @@ on early-init
     mkdir /data 0771 system system
     mkdir /cache 0771 system cache
     mkdir /devlog 0700 root root
-    mkdir /mnt/sdcard 0000 system system
     mkdir /sd-ext 0771 system system
+
+    mkdir /storage 0050 system sdcard_r
+    mkdir /storage/sdcard0 0000 system system
+    symlink /storage/sdcard0 /mnt/sdcard
+    symlink /storage/sdcard0 /sdcard
 
 on init
 
 # setup the global environment
-  export EXTERNAL_STORAGE /mnt/sdcard
+  export EXTERNAL_STORAGE /storage/sdcard0
   export SD_EXT_DIRECTORY /sd-ext
   export DOWNLOAD_CACHE /cache/download
-
-# Backwards Compat - XXX: Going away in G*
-  symlink /mnt/sdcard /sdcard
 
 # Add permissions for camera access
   chmod 0666 /dev/msm_camera/config0
@@ -277,7 +278,7 @@ service qcom-post-boot /system/bin/sh /system/etc/init.qcom.post_boot.sh
     oneshot
 
 # Triggered by the KEY_VOLUME_DOWN+KEY_MENU keycodes
-service bugreport /system/bin/logwrapper /system/bin/dumpstate -d -v -o /sdcard/bugreports/bugreport
+service bugreport /system/bin/logwrapper /system/bin/dumpstate -d -v -o /storage/sdcard0/bugreports/bugreport
     keycodes 114 139
     class main
     disabled
